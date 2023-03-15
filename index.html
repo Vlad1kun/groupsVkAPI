@@ -7,7 +7,7 @@
     <title></title>
 </head>
 <body>
-    <input type="text" name="ss" id="s">
+    <input type="text" name="ss" id="s" class="oracle">
     <button class="btn1">
         Ok
     </button>
@@ -15,13 +15,17 @@
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script>
         $.ajax({
-            url: 'https://api.vk.com/method/friends.search?count=60&access_token=vk1.a.1ouR08E0DRBClj4k2SHbnN_RYKvvQBZku__x2luF3YDWIXfjMNb8uaF1pCpYCDWrnufeCeogOu1sMzYST8myi7hefCdN9O-Ym142c8n8DC8oo7mD0Z8Go3wjOKWnjpljf52Linpr0KyvZD2fRsNOVz2VYcVlfq2TkdOTmsNEKcq-8aUp9ZyWJN-Etn-81j4A0ylTfFryhE1vDS__VMf2Bg&v=5.131',
+            url: 'https://api.vk.com/method/groups.getMembers?group_id=clubparkurborisov&fields=sex,bdate&access_token=vk1.a.WKA9ehYIIozMAbJbPLj-lzx7_jSBT4fia18I3y2--MOGwtoARyMsQJ0V7P-NLsVEZJi4p0Ca265fH-kDIgF0ANnueNpa_cDWck5XI_PeuUako-EGtcwL4JdBKOuhFEO0EEj_pcF6m-RivmzbFABqNMb8NGH8UfQ79X1wexwpNuokvy_JoCl0s8FUF57XI8A2bWXC97C66vi8d4XDKCwtQg&v=5.131',
             method: 'GET',
             dataType: 'JSONP',
-            success: function (data) {
+            success: function sas(data) {
                 console.log(data)
+                const x = document.querySelector('.oracle')
+                x.value = data.response.items[0].id
             }
         });
+        
+        
     </script>
 </body>
 </html>
