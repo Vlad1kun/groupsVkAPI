@@ -11,19 +11,78 @@
     <button class="btn1">
         Ok
     </button>
+    <div class="state">
+        <p class="count">Общее количество участников</p>
+        <p class="women">Девушек</p>
+        <p class="men">Мужчин</p>
+        <p class="noSex">Не определено</p>
+        <div class="age">
+            <p class="0_9age"></p>
+            <p class="10_19"></p>
+            <p class="20_29"></p>
+            <p class="30_39"></p>
+            <p class="40_49"></p>
+            <p class="50_59"></p>
+            <p class="60_69"></p>
+        </div>
+
+    </div>
     <script src="index.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script>
-        $.ajax({
-            url: 'https://api.vk.com/method/groups.getMembers?group_id=clubparkurborisov&fields=sex,bdate&access_token=vk1.a.WKA9ehYIIozMAbJbPLj-lzx7_jSBT4fia18I3y2--MOGwtoARyMsQJ0V7P-NLsVEZJi4p0Ca265fH-kDIgF0ANnueNpa_cDWck5XI_PeuUako-EGtcwL4JdBKOuhFEO0EEj_pcF6m-RivmzbFABqNMb8NGH8UfQ79X1wexwpNuokvy_JoCl0s8FUF57XI8A2bWXC97C66vi8d4XDKCwtQg&v=5.131',
+        // clubparkurborisov
+        function vkApi(idGroup, func) {
+            $.ajax({
+            url: `https://api.vk.com/method/groups.getMembers?group_id=${idGroup}&fields=sex,bdate&access_token=vk1.a.1JOBAiR6Nar8ZRQ9kUQu-siwAxvW4DhZSeXgWVmjQo3cTHIJFRZ8WYdCEn7kDZMu-TNzAQdAfQN8SAdA2onQOAiC2dwtNj-3w7K4mBSWpOqJx823qQ9OOcX5tg9L4MbfIoOvK51KJMEBembRVlh8MWUuOym6GsaPfSwt8-o_Bf8gC9-NLAksprIdOmTUK2XKw-qLD6u-24_sN4ve8t-b0A&v=5.131`,
             method: 'GET',
             dataType: 'JSONP',
-            success: function sas(data) {
-                console.log(data)
-                const x = document.querySelector('.oracle')
-                x.value = data.response.items[0].id
+            success: func
+
             }
-        });
+        )};
+
+        function sas() {
+            vkApi('clubparkurborisov', function (data) {
+                let countGirl = 0
+                let countMen = 0
+                let countNoSex = 0
+
+
+                let countHtml = document.querySelector('.count')
+                let countGirlHtml = document.querySelector('.women')
+                let countMenHtml = document.querySelector('.men')
+                let countNoSexHtml = document.querySelector('.noSex')
+
+
+
+                console.log(data)
+                for (let i of data.response.items) {
+                    if (i.sex == 1) {
+                        countGirl++
+                    } else if (i.sex == 2) {
+                        countMen++
+                    } else {
+                        countNoSex++
+                    }
+                    
+                }
+                countNoSex = data.response.count - countNoSex
+                countHtml.innerHTML += ` ${data.response.count}`
+                countGirlHtml.innerHTML += ` ${countGirl}`
+                countMenHtml.innerHTML += ` ${countMen}`
+                countNoSexHtml.innerHTML += ` ${countHtml - countNoSex}`
+                
+                
+            })
+        }
+        
+        sas()
+
+
+        
+
+
+        
         
         
     </script>
