@@ -5,27 +5,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input type="text" name="ss" id="s" class="oracle">
-    <button class="btn1">
-        Ok
-    </button>
-    <div class="state">
-        <p class="count">Общее количество участников</p>
-        <p class="women">Девушек</p>
-        <p class="men">Мужчин</p>
-        <p class="noSex">Не определено</p>
-        <div class="age">
-            <p class="0_9age"></p>
-            <p class="10_19"></p>
-            <p class="20_29"></p>
-            <p class="30_39"></p>
-            <p class="40_49"></p>
-            <p class="50_59"></p>
-            <p class="60_69"></p>
+    <div class="wrapper">
+        <header class="header">
+            <h1 class="vkSite">Вк Анализатор</h1>
+        </header>
+        <main class="main">
+            <div class="center">
+                <input type="text" name="ss" id="s" class="oracle" placeholder="Введите ссылку">
+        <button class="btn1">Ok</button>
+        <div class="state">
+            <p class="count">Общее количество участников</p>
+            <p class="women">Девушек</p>
+            <p class="men">Мужчин</p>
+            <p class="noSex">Не определено</p>
+            <div class="age">
+                <p>0- 9 Лет<span class="age0_9"> </span></p>
+                <p>10 - 19<span class="age10_19"> </span></p>
+                <p>20 - 29<span class="age20_29"> </span></p>
+                <p>30 - 39<span class="age30_39"> </span></p>
+                <p>40 - 49<span class="age40_49"> </span></p>
+                <p>50+ <span class="maxAge"> </span></p>
+                <p>Неопределено <span class="all"> </span></p>
+            </div>
+    
         </div>
-
+            </div>
+        </main>
     </div>
     <script src="index.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -33,50 +41,117 @@
         // clubparkurborisov
         function vkApi(idGroup, func) {
             $.ajax({
-            url: `https://api.vk.com/method/groups.getMembers?group_id=${idGroup}&fields=sex,bdate&access_token=vk1.a.1JOBAiR6Nar8ZRQ9kUQu-siwAxvW4DhZSeXgWVmjQo3cTHIJFRZ8WYdCEn7kDZMu-TNzAQdAfQN8SAdA2onQOAiC2dwtNj-3w7K4mBSWpOqJx823qQ9OOcX5tg9L4MbfIoOvK51KJMEBembRVlh8MWUuOym6GsaPfSwt8-o_Bf8gC9-NLAksprIdOmTUK2XKw-qLD6u-24_sN4ve8t-b0A&v=5.131`,
-            method: 'GET',
+            url: `https://api.vk.com/method/groups.getMembers?group_id=${idGroup}&fields=sex,bdate&access_token=vk1.a.m8ZOGMU94O9SInuhwhZOOZZCwGZG1Wxczl-CBFGlILobGXn40BEv_FWMhAaYaVdACm8XdISZZKGCJ1LdBdCaQLQ_cML8JFXgHX3ZSY9pbr_VOxbSlqfQG_aosdOkDXg1JqIRTHWlQsRWBQoiU0UAWUuWSr6YBn_zeR3B83tHnuwSJwDSlmttrLGfq8GZJ6zwlazOh_tD9um88FIqmi_Gvw&v=5.131`,
+            method: 'POST',
             dataType: 'JSONP',
             success: func
 
             }
         )};
 
-        function sas() {
-            vkApi('clubparkurborisov', function (data) {
-                let countGirl = 0
-                let countMen = 0
-                let countNoSex = 0
-
-
-                let countHtml = document.querySelector('.count')
-                let countGirlHtml = document.querySelector('.women')
-                let countMenHtml = document.querySelector('.men')
-                let countNoSexHtml = document.querySelector('.noSex')
-
-
-
-                console.log(data)
-                for (let i of data.response.items) {
-                    if (i.sex == 1) {
-                        countGirl++
-                    } else if (i.sex == 2) {
-                        countMen++
-                    } else {
-                        countNoSex++
-                    }
-                    
+            // sex
+        function sex(array) {
+            let countGirl = 0;
+            let countMen = 0;
+            let countNoSex = 0;
+            
+            let countHtml = document.querySelector('.count');
+            let countGirlHtml = document.querySelector('.women');
+            let countMenHtml = document.querySelector('.men');
+            let countNoSexHtml = document.querySelector('.noSex');
+            for (let i of array.response.items) {
+                if (i.sex == 1) {
+                    countGirl++
+                } else if (i.sex == 2) {
+                    countMen++
+                } else if (i.sex == 0){
+                    countNoSex++
                 }
-                countNoSex = data.response.count - countNoSex
-                countHtml.innerHTML += ` ${data.response.count}`
-                countGirlHtml.innerHTML += ` ${countGirl}`
-                countMenHtml.innerHTML += ` ${countMen}`
-                countNoSexHtml.innerHTML += ` ${countHtml - countNoSex}`
                 
-                
-            })
+            }
+            countNoSex = array.response.count - countNoSex
+            countHtml.innerHTML += ` ${array.response.count}`
+            countGirlHtml.innerHTML += ` ${countGirl} (${Math.round(countGirl/(countGirl + countMen) * 100)}%)`
+            countMenHtml.innerHTML += ` ${countMen} (${Math.round(countMen/(countGirl + countMen) * 100)}%)`
+            countNoSexHtml.innerHTML += ` ${array.response.count - (countGirl + countMen)}`
         }
+
+        function age(data) {
+            let age = 0
+
+            let age9 = 0;
+            let age19 = 0;
+            let age29 = 0;
+            let age39 = 0;
+            let age49 = 0;
+            let ageMax = 0;
+            let ageAll = 0;
+
+            let age9Html = document.querySelector('.age0_9') 
+            let age19Html = document.querySelector('.age10_19') 
+            let age29Html = document.querySelector('.age20_29')
+            let age39Html = document.querySelector('.age30_39')
+            let age49Html = document.querySelector('.age40_49')
+            let ageMaxHtml = document.querySelector('.maxAge')
+            let ageAllHtml = document.querySelector('.all') 
+            
+
+            let count = 0
+
+            console.log(data)
+
+            for (let i of data.response.items) {
+                if (i.bdate) {
+                    r = String(i.bdate).split('.')
+                    if (r.length == 3) {
+                        count++
+                        age = Number(2023 - r[2])
+                        if (age < 10) {
+                            age9++
+                        } else if (age < 20) {
+                            age19++
+                        } else if (age < 30) {
+                            age29++
+                        } else if (age < 40) {
+                            age39++
+                        } else if (age < 50) {
+                            age49++
+                        } else if (age < 120) {
+                            ageMax++
+                        }
+                        
+                    }
+                }
+            } 
+                        ageAll = data.response.count - age9 - age19 - age29 - age39 - age49 - ageMax;
+                        age9Html.innerHTML = ` ${age9}`;
+                        age19Html.innerHTML = ` ${age19}`;
+                        age29Html.innerHTML = ` ${age29}`;
+                        age39Html.innerHTML = ` ${age39}`;
+                        age49Html.innerHTML = ` ${age49}`;
+                        ageMaxHtml.innerHTML = ` ${ageMax}`;
+                        ageAllHtml.innerHTML = ` ${ageAll}`;
+
+        }
+
+
         
-        sas()
+        
+        function bossFunc() {
+            linkHtml = document.querySelector('.oracle').value
+            linkHtml = String(linkHtml).split('/')
+            linkHtml = linkHtml[linkHtml.length - 1]
+            vkApi(linkHtml, function (data) {
+                sex(data)
+                age(data)
+        }
+        )};
+
+        const button = document.querySelector('.btn1')
+        button.addEventListener('click', bossFunc)
+
+
+            
 
 
         
