@@ -4,281 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <link rel="stylesheet" href="style.css">
+    <title>Анализатор групп Вконтакте</title>
+    <link rel="shortcut icon" href="https://znanieetosila.ru/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../CSS/style.css">
 </head>
 <body>
     <div class="wrapper">
         <header class="header">
-            <h1 class="vkSite">Вк Анализатор</h1>
+            <div class="box__title">
+                <h1 class="title">Анализатор Вк Групп</h1>
+                <h2 class="title__h2">Это веб-приложение построенное на вк API </h2>
+            </div>
         </header>
         <main class="main">
-            <div class="center">
-                <input type="text" name="ss" id="s" class="oracle" placeholder="Введите ссылку группы https:">
-        <button class="btn1">Ok</button>
-        <div class="state">
-            <div class="state_1">
-                <p>Общее количество участников:<span class="count"></span></p>
-            <p>Девушек: <span class="women"></span></p>
-            <p>Мужчин: <span class="men"></span></p>
-            <p>Не определено:<span class="noSex"></span> </p>
-            <div class="age">
-                <p>0- 9 лет: <span class="age0_9"> </span></p>
-                <p>10 - 19 лет: <span class="age10_19"> </span></p>
-                <p>20 - 29 лет: <span class="age20_29"> </span></p>
-                <p>30 - 39 лет: <span class="age30_39"> </span></p>
-                <p>40 - 49 лет: <span class="age40_49"> </span></p>
-                <p>50+ лет:  <span class="maxAge"> </span></p>
-                <p>Неопределено <span class="all"> </span></p>
-            </div>
-            </div>
-            <div class="diogramm">
-                <div class="container">
-                    <canvas id="myChart" width="300" height="300"></canvas>
-               </div>
-               <div class="container">
-                <canvas id="myChart2" width="300" height="300"></canvas>
-           </div>
-            </div>
-            
-    
-        </div>
-        
-            </div>
-            
+            <p>Для получения информации о группе в Вк, заполните id группы в поле ниже и нажмите клавишу узнать.</p>
         </main>
         <footer class="footer">
-            <p class="by"><a href="https://github.com/Vlad1kun" class="link_by">Vlad1kun</a></p>
+            <a href="https://github.com/Vlad1kun" class="link_git">Link in GitHub</a>
         </footer>
-        </div>
+    </div>
+    
     <script src="index.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
-    <script>
-        // clubparkurborisov
-        function vkApi(idGroup, func) {
-            $.ajax({
-            url: `https://api.vk.com/method/groups.getMembers?group_id=${idGroup}&fields=sex,bdate&access_token=vk1.a.fs9h84aViT1sTbMSqL_xRdMP_iUNhxpGxXIqzn_zQvuL6MvS9L1NdNHMUgNeMHPmitL5K4hsWLwGZwF7fLSAeetdwqBhNvLcmByY-I0528tbsWVi0d7_T8msYs2PNc_k_GtwCUBESnSKW4RFb2nOYN4Zf6sA6SAGTunLnAGVdFLYlwCWYBsTiqOafl4jCnm0SnW9WDScJpR0MfdGvShIMw&v=5.131`,
-            method: 'POST',
-            dataType: 'JSONP',
-            success: func
-
-            }
-        )};
-
-            // sex
-        function sex(array) {
-            let countGirl = 0;
-            let countMen = 0;
-            let countNoSex = 0;
-            
-            let countHtml = document.querySelector('.count');
-            let countGirlHtml = document.querySelector('.women');
-            let countMenHtml = document.querySelector('.men');
-            let countNoSexHtml = document.querySelector('.noSex');
-            for (let i of array.response.items) {
-                if (i.sex == 1) {
-                    countGirl++
-                } else if (i.sex == 2) {
-                    countMen++
-                } else if (i.sex == 0){
-                    countNoSex++
-                }
-                
-            }
-            countNoSex = array.response.count - countNoSex
-            countHtml.innerHTML = ` ${array.response.count}`
-            countGirlHtml.innerHTML = ` ${countGirl} (${Math.round(countGirl/(countGirl + countMen) * 100)}%)`
-            countMenHtml.innerHTML = ` ${countMen} (${Math.round(countMen/(countGirl + countMen) * 100)}%)`
-            countNoSexHtml.innerHTML = ` ${array.response.count - (countGirl + countMen)}`
-        }
-
-        function age(data) {
-            let age = 0
-
-            let age9 = 0;
-            let age19 = 0;
-            let age29 = 0;
-            let age39 = 0;
-            let age49 = 0;
-            let ageMax = 0;
-            let ageAll = 0;
-
-            let age9Html = document.querySelector('.age0_9') 
-            let age19Html = document.querySelector('.age10_19') 
-            let age29Html = document.querySelector('.age20_29')
-            let age39Html = document.querySelector('.age30_39')
-            let age49Html = document.querySelector('.age40_49')
-            let ageMaxHtml = document.querySelector('.maxAge')
-            let ageAllHtml = document.querySelector('.all') 
-            
-
-            let count = 0
-
-            console.log(data)
-
-            for (let i of data.response.items) {
-                if (i.bdate) {
-                    r = String(i.bdate).split('.')
-                    if (r.length == 3) {
-                        count++
-                        age = Number(2023 - r[2])
-                        if (age < 10) {
-                            age9++
-                        } else if (age < 20) {
-                            age19++
-                        } else if (age < 30) {
-                            age29++
-                        } else if (age < 40) {
-                            age39++
-                        } else if (age < 50) {
-                            age49++
-                        } else if (age < 120) {
-                            ageMax++
-                        }
-                        
-                    }
-                }
-            } 
-                        ageAll = data.response.count - age9 - age19 - age29 - age39 - age49 - ageMax;
-                        age9Html.innerHTML = ` ${age9}`;
-                        age19Html.innerHTML = ` ${age19}`;
-                        age29Html.innerHTML = ` ${age29}`;
-                        age39Html.innerHTML = ` ${age39}`;
-                        age49Html.innerHTML = ` ${age49}`;
-                        ageMaxHtml.innerHTML = ` ${ageMax}`;
-                        ageAllHtml.innerHTML = ` ${ageAll}`;
-
-        }
-
-
-        
-        
-        function bossFunc() {
-            linkHtml = document.querySelector('.oracle').value
-            linkHtml = String(linkHtml).split('/')
-            linkHtml = linkHtml[linkHtml.length - 1]
-            vkApi(linkHtml, function (data) {
-                sex(data)
-                age(data)
-                diograms()
-                diograms2()
-        }
-        )};
-
-        const button = document.querySelector('.btn1')
-        button.addEventListener('click', bossFunc)
-
-        function diograms() {
-            let women = document.querySelector('.women').textContent.split(' ')[1]
-            let men = document.querySelector('.men').textContent.split(' ')[1]
-            console.log(women)
-            let ctx = document.getElementById('myChart').getContext('2d');
-    let myChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: [`Women: ${document.querySelector('.women').innerHTML}`, `men: ${document.querySelector('.men').innerHTML}`],
-        datasets: [{
-            data: [women, men],
-            backgroundColor: ['#e91e63', '#00e676', '#ff5722', '#1e88e5', '#ffd600'],
-            borderWidth: 1.9 ,
-            borderColor: '#rrr'
-        }]
-    },
-    options: {
-        title: {
-            display: true,
-            text: 'Man and Women',
-            position: 'top',
-            fontSize: 16,
-            fontColor: '#111',
-            padding: 20
-        },
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-                boxWidth: 5,
-                fontColor: '#111',
-                padding: 15
-            }
-        },
-        tooltips: {
-            enabled: false
-        },
-        plugins: {
-            datalabels: {
-                color: '#111',
-                textAlign: 'center',
-                font: {
-                    lineHeight: 1.6
-                },
-                formatter: function(value, ctx) {
-                    return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
-                }
-            }
-        }
-    }
-});
-        }
-
-        function diograms2() {
-            let age9Html = document.querySelector('.age0_9') 
-            let age19Html = document.querySelector('.age10_19') 
-            let age29Html = document.querySelector('.age20_29')
-            let age39Html = document.querySelector('.age30_39')
-            let age49Html = document.querySelector('.age40_49')
-            let ageMaxHtml = document.querySelector('.maxAge')
-            let summa = Number(age9Html.textContent) + Number(age19Html.textContent) + Number(age29Html.textContent) + Number(age39Html.textContent) + Number(age49Html.textContent) + Number(ageMaxHtml.textContent)
-            console.log((age19Html.innerHTML/summa)*100)
-            let ctx2 = document.getElementById('myChart2').getContext('2d');
-    let myChart2 = new Chart(ctx2, {
-    type: 'doughnut',
-    data: {
-        labels: [`0-9: ${Math.round((age9Html.innerHTML/summa) * 100)}%`, `10-19: ${Math.round((age19Html.innerHTML/summa) * 100)}%`, `20-29: ${Math.round((age29Html.innerHTML/summa)*100)}%`, `30-39: ${Math.round((age39Html.innerHTML/summa)*100)}%`, `40-49: ${Math.round((age49Html.innerHTML/summa) *100)}%`, `50+: ${Math.round((ageMaxHtml.innerHTML/summa) *100)}%`],
-        datasets: [{
-            data: [age9Html.textContent, age19Html.textContent, age29Html.textContent, age39Html.textContent, age49Html.textContent, ageMaxHtml.textContent],
-            backgroundColor: ['#e91e63', '#00e676', '#ff5722', '#1e88e5', '#ffd600', '#e94e63'],
-            borderWidth: 1.9 ,
-            borderColor: '#rrr'
-        }]
-    },
-    options: {
-        title: {
-            display: true,
-            text: 'Recommended Daily Diet',
-            position: 'top',
-            fontSize: 16,
-            fontColor: '#111',
-            padding: 20
-        },
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-                boxWidth: 5,
-                fontColor: '#111',
-                padding: 15
-            }
-        },
-        tooltips: {
-            enabled: false
-        },
-        plugins: {
-            datalabels: {
-                color: '#111',
-                textAlign: 'center',
-                font: {
-                    lineHeight: 1.6
-                },
-                formatter: function(value, ctx2) {
-                    return ctx2.chart.data.labels[ctx2.dataIndex] + '\n' + value + '%';
-                }
-            }
-        }
-    }
-});
-        }
-    </script>
 </body>
 </html>
